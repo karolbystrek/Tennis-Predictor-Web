@@ -6,10 +6,10 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @EnableCaching
 @SpringBootApplication
-public class TennisPredictorApplication {
+public class TennisPredictorWebApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TennisPredictorApplication.class, args);
+        SpringApplication.run(TennisPredictorWebApplication.class, args);
     }
 
 }
