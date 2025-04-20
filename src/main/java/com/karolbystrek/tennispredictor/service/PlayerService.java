@@ -3,17 +3,15 @@ package com.karolbystrek.tennispredictor.service;
 import com.karolbystrek.tennispredictor.model.Player;
 import com.karolbystrek.tennispredictor.model.PlayerDTO;
 import com.karolbystrek.tennispredictor.repository.PlayerRepository;
-import org.springframework.cache.annotation.CacheConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Service
-@CacheConfig(cacheNames = {"players"})
 public class PlayerService {
 
     private static final Logger log = LoggerFactory.getLogger(PlayerService.class);
@@ -23,7 +21,7 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    @Cacheable
+    @Cacheable("playersCache")
     public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
         log.info("Fetching all players from repository (cacheable)");
         List<Player> players = playerRepository.findAll();
