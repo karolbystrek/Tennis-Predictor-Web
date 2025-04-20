@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Prediction result | Tennis Predictor</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/prediction-result.css}">
+</head>
+<body>
+<div class="result-container">
+    <div class="result-card">
+        <h1>Match Prediction Result</h1>
+        <div class="players-stats">
+            <div class="players-stat">
+                <div class="player-name" th:text="${predictionResponse.player1Name}">Player 1</div>
+                <div class="win-probability"
+                     th:text="${#numbers.formatPercent(predictionResponse.player1WinProbability, 1, 0)}">50%
+                </div>
+            </div>
+            <div class="vs-badge">VS</div>
+            <div class="player-stat">
+                <div class="player-name" th:text="${predictionResponse.player2Name}">Player 2</div>
+                <div class="win-probability"
+                     th:text="${#numbers.formatPercent(predictionResponse.player2WinProbability, 1, 0)}">50%
+                </div>
+            </div>
+        </div>
+        <div class="prediction-result">
+            <div class="winner">
+                Predicted Winner: <span th:text="${predictionResponse.winnerName}">Winner name</span>
+            </div>
+            <div class="confidence">
+                Confidence: <span th:text="${#numbers.formatPercent(predictionResponse.confidence, 1, 0)}">75%</span>
+            </div>
+        </div>
+        <a class="back-button" href="/prediction">Make Another Prediction</a>
+    </div>
+</div>
+</body>
+</html>

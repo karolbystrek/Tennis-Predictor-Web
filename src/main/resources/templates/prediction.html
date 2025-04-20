@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Match Prediction | Tennis Predictor</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/prediction.css}">
+</head>
+<body>
+<div class="prediction-container">
+    <div class="prediction-card">
+        <h1>Tennis Match Predictor</h1>
+        <form id="prediction-form" method="post" th:action="@{/prediction}" th:object="${predictionRequest}">
+            <div class="players-container">
+                <div class="player-field">
+                    <label for="player1Name">Player 1</label>
+                    <input class="player-search-trigger" data-player="1" id="player1Name"
+                           placeholder="Search for player" readonly type="text"/>
+                    <input id="player1Id" name="player1Id" required th:field="*{player1Id}" type="hidden"/>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="player-field">
+                    <label for="player2Name">Player 2</label>
+                    <input class="player-search-trigger" data-player="2" id="player2Name"
+                           placeholder="Search for player" readonly type="text"/>
+                    <input id="player2Id" name="player2Id" required th:field="*{player2Id}" type="hidden"/>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="tourney-level">Tournament Level</label>
+                    <div class="custom-select">
+                        <select id="tourney-level" name="tourneyLevel" required th:field="*{tourneyLevel}">
+                            <option disabled selected value=""></option>
+                            <option value="G">Grand Slam (G)</option>
+                            <option value="M">Masters 1000 (M)</option>
+                            <option value="A">ATP Tour 500 (A)</option>
+                            <option value="D">ATP Tour 250 (D)</option>
+                            <option value="F">Tour Finals (F)</option>
+                            <option value="O">Other (O)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="surface">Surface</label>
+                    <div class="custom-select">
+                        <select id="surface" name="surface" required th:field="*{surface}">
+                            <option disabled selected value=""></option>
+                            <option value="Hard">Hard</option>
+                            <option value="Clay">Clay</option>
+                            <option value="Grass">Grass</option>
+                            <option value="Carpet">Carpet</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="best-of">Best of</label>
+                    <div class="custom-select">
+                        <select id="best-of" name="bestOf" required th:field="*{bestOf}">
+                            <option disabled selected value=""></option>
+                            <option value="3">Best of 3</option>
+                            <option value="5">Best of 5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="round">Tournament Round</label>
+                    <div class="custom-select">
+                        <select id="round" name="round" required th:field="*{round}">
+                            <option disabled selected value=""></option>
+                            <option value="R128">Round of 128 (R128)</option>
+                            <option value="R64">Round of 64 (R64)</option>
+                            <option value="R32">Round of 32 (R32)</option>
+                            <option value="R16">Round of 16 (R16)</option>
+                            <option value="QF">Quarter Final (QF)</option>
+                            <option value="SF">Semi Final (SF)</option>
+                            <option value="F">Final (F)</option>
+                            <option value="RR">Round Robin (RR)</option>
+                            <option value="BR">Bronze Medal (BR)</option>
+                            <option value="ER">Early Rounds (ER)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-predict" type="submit">Predict Match Result</button>
+        </form>
+    </div>
+</div>
+<div class="modal" id="playerSearchModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Search Player</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="search-container">
+                <label for="playerSearchInput"></label>
+                <input id="playerSearchInput" placeholder="Type player name..." type="text">
+            </div>
+            <div class="results-container" id="searchResults">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/player-search.js}"></script>
+<script th:src="@{/js/custom-selects.js}"></script>
+</body>
+</html>

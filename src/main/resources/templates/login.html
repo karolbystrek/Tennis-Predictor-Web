@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Login | Tennis Predictor</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+<div class="login-container">
+    <div class="success" th:if="${param.registered}">
+        Registration successful. Please log in.
+    </div>
+    <div class="form-card">
+        <h1>Login</h1>
+        <form method="post" th:action="@{/login}" th:object="${loginRequest}">
+            <div class="form-group">
+                <label for="credential">Username</label>
+                <input id="credential" name="credential" placeholder="Enter username or email" required type="text"/>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" placeholder="Enter password" required type="password"/>
+            </div>
+            <button class="btn-login" type="submit">Login</button>
+            <div class="form-links">
+                <a th:href="@{/register}">Register</a>
+            </div>
+        </form>
+        <div class="error" th:if="${param.error}">
+            Invalid username or password.
+        </div>
+        <div class="success" th:if="${param.logout}">
+            You have been logged out successfully.
+        </div>
+    </div>
+</div>
+</body>
+</html>
