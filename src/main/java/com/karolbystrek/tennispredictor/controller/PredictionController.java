@@ -4,10 +4,12 @@ import com.karolbystrek.tennispredictor.exceptions.PredictionServiceException;
 import com.karolbystrek.tennispredictor.model.PredictionRequest;
 import com.karolbystrek.tennispredictor.model.PredictionResponse;
 import com.karolbystrek.tennispredictor.service.PredictionService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +31,9 @@ public class PredictionController {
     @GetMapping
     public String getPrediction(Model model) {
         log.info("GET /prediction - Displaying prediction form");
-        model.addAttribute("predictionRequest", new PredictionRequest());
+        if (!model.containsAttribute("predictionRequest")) {
+            model.addAttribute("predictionRequest", new PredictionRequest());
+        }
         return "prediction";
     }
 
@@ -45,9 +49,15 @@ public class PredictionController {
     }
 
     @PostMapping
-    public String makePrediction(@ModelAttribute("predictionRequest") PredictionRequest request,
+    public String makePrediction(@Valid @ModelAttribute("predictionRequest") PredictionRequest request,
+                                 BindingResult bindingResult,
                                  RedirectAttributes redirectAttributes) {
         log.info("POST /prediction - Received prediction request: {}", request);
+        if (bindingResult.hasErrors()) {
+            log.warn("POST /prediction - Validation errors found: {}", bindingResult.getAllErrors());
+            return "redirect:/prediction";
+        }
+
         try {
             PredictionResponse response = predictionService.predict(request);
             log.info("Prediction successful for request: {}", request);
