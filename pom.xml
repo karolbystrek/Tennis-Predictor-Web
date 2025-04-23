@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.karolbystrek</groupId>
-    <artifactId>Tennis Predictor Web</artifactId>
+    <artifactId>tennis-predictor-web</artifactId>
     <version>1.0</version>
     <name>Tennis Predictor</name>
     <description>Tennis Predictor Web Application</description>
