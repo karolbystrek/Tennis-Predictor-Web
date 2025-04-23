@@ -1,6 +1,9 @@
 package com.karolbystrek.tennispredictor.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -16,12 +19,17 @@ public class CustomUser {
     @Column(name = "id")
     private Long id;
 
+    @NotBlank(message = "Username cannot be blank")
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
+    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email cannot be blank")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
+    @Size(min = 11, message = "Password must be at least 11 characters long")
+    @NotBlank(message = "Password cannot be blank")
     @Column(name = "password", nullable = false)
     private String password;
 
