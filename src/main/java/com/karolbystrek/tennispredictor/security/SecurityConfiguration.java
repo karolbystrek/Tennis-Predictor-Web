@@ -73,8 +73,6 @@ public class SecurityConfiguration {
                         .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                         .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
                 )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**"))
                 .build();
     }
 
