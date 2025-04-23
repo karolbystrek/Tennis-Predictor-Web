@@ -31,7 +31,6 @@ public class PredictionRequest {
     private String tourneyLevel;
 
     @Min(value = 1, message = "Best of must be positive")
-    @NotBlank(message = "Tournament ID is required")
     @NotNull(message = "Tournament ID is required")
     private Integer bestOf;
 
