@@ -6,7 +6,6 @@ import com.karolbystrek.tennispredictor.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +21,11 @@ public class PlayerService {
     }
 
     @Cacheable("playersCache")
-    public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
+    public List<PlayerDTO> getAllPlayers() {
         log.info("Fetching all players from repository (cacheable)");
         List<Player> players = playerRepository.findAll();
         List<PlayerDTO> playerDTOs = players.stream().map(PlayerDTO::new).toList();
         log.debug("Found {} players in repository", players.size());
-        return ResponseEntity.ok(playerDTOs);
+        return playerDTOs;
     }
 }

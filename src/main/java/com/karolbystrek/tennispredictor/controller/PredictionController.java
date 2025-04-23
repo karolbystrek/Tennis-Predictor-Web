@@ -1,8 +1,11 @@
 package com.karolbystrek.tennispredictor.controller;
 
+import com.karolbystrek.tennispredictor.exceptions.PredictionServiceException;
 import com.karolbystrek.tennispredictor.model.PredictionRequest;
 import com.karolbystrek.tennispredictor.model.PredictionResponse;
 import com.karolbystrek.tennispredictor.service.PredictionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,8 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @Controller
@@ -52,6 +53,11 @@ public class PredictionController {
             log.info("Prediction successful for request: {}", request);
             redirectAttributes.addFlashAttribute("predictionResponse", response);
             return "redirect:/prediction/result";
+        } catch (PredictionServiceException e) {
+            log.error("Prediction service error (Status {}): {}", e.getStatusCode(), e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("predictionRequest", request);
+            return "redirect:/prediction";
         } catch (Exception e) {
             log.error("Error during prediction for request: {}", request, e);
             redirectAttributes.addFlashAttribute("error", e.getMessage());

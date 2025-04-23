@@ -7,6 +7,7 @@ import com.karolbystrek.tennispredictor.model.PredictionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -31,12 +32,12 @@ public class PredictionService {
             throw new IllegalStateException("API key not configured for PredictionService");
         }
         if (baseUrl == null || baseUrl.isEmpty()) {
-             log.error("API base URL 'tennis.predictor.api.base-url' is not configured properly in application.properties.");
-             throw new IllegalStateException("API base URL not configured for PredictionService");
+            log.error("API base URL 'tennis.predictor.api.base-url' is not configured properly in application.properties.");
+            throw new IllegalStateException("API base URL not configured for PredictionService");
         }
         if (predictPath == null || predictPath.isEmpty()) {
-             log.error("API predict path 'tennis.predictor.api.predict-path' is not configured properly in application.properties.");
-             throw new IllegalStateException("API predict path not configured for PredictionService");
+            log.error("API predict path 'tennis.predictor.api.predict-path' is not configured properly in application.properties.");
+            throw new IllegalStateException("API predict path not configured for PredictionService");
         }
 
         this.predictPath = predictPath;
@@ -69,15 +70,17 @@ public class PredictionService {
                 .bodyToMono(PredictionResponse.class)
                 .onErrorResume(WebClientResponseException.class, e -> {
                     log.error("API error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-                    return switch (e.getStatusCode().value()) {
-                        case 400 ->
+                    return switch (e.getStatusCode()) {
+                        case HttpStatus.BAD_REQUEST ->
                                 Mono.error(new PredictionServiceException("Invalid prediction request: " + e.getResponseBodyAsString(), 400));
-                        case 404 ->
+                        case HttpStatus.NOT_FOUND ->
                                 Mono.error(new PlayerNotFoundException("Player not found: " + e.getResponseBodyAsString()));
-                        case 415 -> Mono.error(new PredictionServiceException("Invalid content type", 415));
-                        case 503 ->
+                        case HttpStatus.UNSUPPORTED_MEDIA_TYPE ->
+                                Mono.error(new PredictionServiceException("Invalid content type", 415));
+                        case HttpStatus.SERVICE_UNAVAILABLE ->
                                 Mono.error(new PredictionServiceException("Prediction service temporarily unavailable", 503));
-                        default -> Mono.error(new PredictionServiceException("Internal server error: " + e.getResponseBodyAsString(), 500));
+                        default ->
+                                Mono.error(new PredictionServiceException("Internal server error: " + e.getResponseBodyAsString(), 500));
                     };
                 })
                 .onErrorResume(Exception.class, e -> {
