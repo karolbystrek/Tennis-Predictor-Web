@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class ErrorResponse {
+public class StructuredErrorResponse {
 
-    private String message;
+    private Map<String, String> errors;
 }
