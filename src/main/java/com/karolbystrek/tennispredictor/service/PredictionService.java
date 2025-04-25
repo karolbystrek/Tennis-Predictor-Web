@@ -72,22 +72,20 @@ public class PredictionService {
                     log.error("API error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
                     return switch (e.getStatusCode()) {
                         case HttpStatus.BAD_REQUEST ->
-                                Mono.error(new PredictionServiceException("Invalid prediction request: " + e.getResponseBodyAsString(), 400));
+                                Mono.error(new PredictionServiceException("Invalid prediction request: " + e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST.value()));
                         case HttpStatus.NOT_FOUND ->
-                                Mono.error(new PlayerNotFoundException("Player not found: " + e.getResponseBodyAsString()));
+                                Mono.error(new PredictionServiceException("Player not found: " + e.getResponseBodyAsString(), HttpStatus.NOT_FOUND.value()));
                         case HttpStatus.UNSUPPORTED_MEDIA_TYPE ->
-                                Mono.error(new PredictionServiceException("Invalid content type", 415));
+                                Mono.error(new PredictionServiceException("Invalid content type: " + e.getResponseBodyAsString(), HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()));
                         case HttpStatus.SERVICE_UNAVAILABLE ->
-                                Mono.error(new PredictionServiceException("Prediction service temporarily unavailable", 503));
-                        case HttpStatus.INTERNAL_SERVER_ERROR ->
-                                Mono.error(new PredictionServiceException("Prediction service internal server error", 500));
+                                Mono.error(new PredictionServiceException("Prediction service temporarily unavailable: " + e.getResponseBodyAsString(), HttpStatus.SERVICE_UNAVAILABLE.value()));
                         default ->
-                                Mono.error(new PredictionServiceException("Prediction service error: " + e.getResponseBodyAsString(), 500));
+                                Mono.error(new PredictionServiceException("Prediction service internal server error: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
                     };
                 })
                 .onErrorResume(e -> !(e instanceof WebClientResponseException || e instanceof PredictionServiceException || e instanceof PlayerNotFoundException), e -> {
                     log.error("Unexpected error during prediction", e);
-                    return Mono.error(new PredictionServiceException("Unexpected error during prediction", 500));
+                    return Mono.error(new PredictionServiceException("Prediction service internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
                 })
                 .block();
 
