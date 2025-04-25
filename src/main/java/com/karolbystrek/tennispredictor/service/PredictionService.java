@@ -83,7 +83,7 @@ public class PredictionService {
                                 Mono.error(new PredictionServiceException("Prediction service internal server error: " + e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
                     };
                 })
-                .onErrorResume(e -> !(e instanceof WebClientResponseException || e instanceof PredictionServiceException || e instanceof PlayerNotFoundException), e -> {
+                .onErrorResume(e -> !(e instanceof PredictionServiceException || e instanceof PlayerNotFoundException), e -> {
                     log.error("Unexpected error during prediction", e);
                     return Mono.error(new PredictionServiceException("Prediction service internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
                 })
