@@ -74,7 +74,7 @@ public class PredictionService {
                         case HttpStatus.BAD_REQUEST ->
                                 Mono.error(new PredictionServiceException("Invalid prediction request: " + e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST.value()));
                         case HttpStatus.NOT_FOUND ->
-                                Mono.error(new PredictionServiceException("Player not found: " + e.getResponseBodyAsString(), HttpStatus.NOT_FOUND.value()));
+                                Mono.error(new PlayerNotFoundException("Player not found: " + e.getResponseBodyAsString()));
                         case HttpStatus.UNSUPPORTED_MEDIA_TYPE ->
                                 Mono.error(new PredictionServiceException("Invalid content type: " + e.getResponseBodyAsString(), HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()));
                         case HttpStatus.SERVICE_UNAVAILABLE ->
