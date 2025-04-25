@@ -61,7 +61,7 @@ public class PredictionService {
                 "round", request.getRound()
         );
 
-        log.debug("Sending prediction request to {}{} with body: {}", client.mutate().build().toString(), predictPath, requestBody);
+        log.debug("Sending prediction request to {}{} with body: {}", client.mutate().build(), predictPath, requestBody);
 
         PredictionResponse response = client.post()
                 .uri(this.predictPath)
@@ -79,21 +79,19 @@ public class PredictionService {
                                 Mono.error(new PredictionServiceException("Invalid content type", 415));
                         case HttpStatus.SERVICE_UNAVAILABLE ->
                                 Mono.error(new PredictionServiceException("Prediction service temporarily unavailable", 503));
+                        case HttpStatus.INTERNAL_SERVER_ERROR ->
+                                Mono.error(new PredictionServiceException("Prediction service internal server error", 500));
                         default ->
-                                Mono.error(new PredictionServiceException("Internal server error: " + e.getResponseBodyAsString(), 500));
+                                Mono.error(new PredictionServiceException("Prediction service error: " + e.getResponseBodyAsString(), 500));
                     };
                 })
-                .onErrorResume(Exception.class, e -> {
+                .onErrorResume(e -> !(e instanceof WebClientResponseException || e instanceof PredictionServiceException || e instanceof PlayerNotFoundException), e -> {
                     log.error("Unexpected error during prediction", e);
                     return Mono.error(new PredictionServiceException("Unexpected error during prediction", 500));
                 })
                 .block();
 
         log.info("Prediction response: {}", response);
-        if (response == null) {
-            log.error("Prediction response is null");
-            throw new PredictionServiceException("Prediction response is null", 500);
-        }
         return response;
     }
 }
