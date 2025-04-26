@@ -29,7 +29,7 @@ public class PredictionController {
     }
 
     @GetMapping
-    public String getPrediction(Model model) {
+    public String getPredictionPage(Model model) {
         log.info("GET /prediction - Displaying prediction form");
         if (!model.containsAttribute("predictionRequest")) {
             model.addAttribute("predictionRequest", new PredictionRequest());
