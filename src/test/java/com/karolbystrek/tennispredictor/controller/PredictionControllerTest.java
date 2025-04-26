@@ -25,9 +25,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.FlashMap;
 
 import com.karolbystrek.tennispredictor.model.PredictionRequest;
 import com.karolbystrek.tennispredictor.model.PredictionResponse;
@@ -63,7 +60,6 @@ class PredictionControllerTest {
     private static final String PREDICTION_URL = "/prediction";
     private static final String PREDICTION_VIEW = "prediction";
     private static final String PREDICTION_REQUEST_ATTRIBUTE = "predictionRequest";
-    private static final String BINDING_RESULT_ATTRIBUTE = "org.springframework.validation.BindingResult.predictionRequest";
 
     private static final String PREDICTION_RESULT_URL = "/prediction/result";
     private static final String PREDICTION_RESULT_VIEW = "prediction-result";
