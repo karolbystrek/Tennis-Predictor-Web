@@ -55,6 +55,7 @@ public class PredictionController {
         log.info("POST /prediction - Received prediction request: {}", request);
         if (bindingResult.hasErrors()) {
             log.warn("POST /prediction - Validation errors found: {}", bindingResult.getAllErrors());
+            redirectAttributes.addFlashAttribute("predictionRequest", request);
             return "redirect:/prediction";
         }
 
