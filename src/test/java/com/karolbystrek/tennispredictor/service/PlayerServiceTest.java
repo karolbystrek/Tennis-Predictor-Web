@@ -3,6 +3,7 @@ package com.karolbystrek.tennispredictor.service;
 import com.karolbystrek.tennispredictor.model.Player;
 import com.karolbystrek.tennispredictor.model.PlayerDTO;
 import com.karolbystrek.tennispredictor.repository.PlayerRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Player Service Tests")
 public class PlayerServiceTest {
 
     @Mock
@@ -31,12 +33,13 @@ public class PlayerServiceTest {
 
 
     @Test
+    @DisplayName("Should return list of PlayerDTOs when players exist in repository")
     void getAllPlayers_shouldReturnPlayerDTOList_whenPlayersExist() {
         Player player1 = new Player();
         player1.setPlayerId(1L);
         player1.setFirstName("Player One");
         Player player2 = new Player();
-        player2.setPlayerId(1L);
+        player2.setPlayerId(2L);
         player2.setFirstName("Player Two");
         List<Player> mockPlayers = Arrays.asList(player1, player2);
 
@@ -53,6 +56,7 @@ public class PlayerServiceTest {
     }
 
     @Test
+    @DisplayName("Should return empty list when no players exist in repository")
     void getAllPlayers_shouldReturnEmptyList_whenNoPlayersExist() {
         when(playerRepository.findAll()).thenReturn(Collections.emptyList());
 
