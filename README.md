@@ -85,7 +85,7 @@ Application configuration is managed in the `src/main/resources/application.prop
 6. **Run the application:**
 
     ```bash
-    java -jar tennis-predictor-web-1.0.jar
+    java -jar target/tennis-predictor.jar
     ```
 
     Alternatively, you can run directly using the Maven Spring Boot plugin (useful for development):
