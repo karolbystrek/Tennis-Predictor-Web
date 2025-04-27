@@ -14,6 +14,7 @@
     <name>Tennis Predictor</name>
     <description>Tennis Predictor Web Application</description>
     <url>https://github.com/karolbystrek/Tennis-Predictor-Web</url>
+    <packaging>jar</packaging>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -112,6 +113,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <finalName>tennis-predictor</finalName>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
