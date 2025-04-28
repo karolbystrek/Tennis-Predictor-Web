@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Confirm Logout | Tennis Predictor</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="center-container">
+    <div class="card form-card">
+        <h1>Confirm Logout</h1>
+        <p class="logout-prompt-text">Are you sure you want to log out?</p>
+        <div class="logout-actions">
+            <form th:action="@{/logout}" method="post" style="display: inline; width: auto;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="btn">Confirm Logout</button>
+            </form>
+        </div>
+        <div class="form-links">
+            <a th:href="@{/prediction}">Go Back</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

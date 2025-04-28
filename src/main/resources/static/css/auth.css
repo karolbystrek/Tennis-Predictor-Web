@@ -106,3 +106,24 @@
         font-size: 1.5rem;
     }
 }
+
+.logout-prompt-text {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+}
+
+.logout-actions {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.logout-actions button {
+     width: auto;
+     padding: 0.75rem 1.5rem;
+}
+
+.form-links {
+    margin-top: 1.5rem;
+    text-align: center;
+}

@@ -9,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-@RequestMapping("/login")
+@RequestMapping
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @GetMapping
+    @GetMapping("/login")
     public String getLoginPage(Model model) {
         log.info("GET /login - Displaying login page");
         if (!model.containsAttribute("loginRequest")) {
@@ -22,4 +22,11 @@ public class LoginController {
         }
         return "login";
     }
+
+    @GetMapping("/logout")
+    public String getLogoutPage() {
+        log.info("GET /logout - Displaying logout page");
+        return "logout";
+    }
+
 }

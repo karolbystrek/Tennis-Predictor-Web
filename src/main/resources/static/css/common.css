@@ -28,14 +28,17 @@
 }
 
 body {
+    padding-top: 60px;
     background-color: var(--neutral-gray);
     color: var(--text-dark);
     line-height: 1.6;
-    min-height: 100vh;
+    height: 100vh;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     background-image: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.94)),
     url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a6ce39' fill-opacity='0.14'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    margin: 0px;
 }
 
 .form-group {
@@ -140,6 +143,19 @@ h1::after {
     border-left: 3px solid var(--error-color);
 }
 
+.prediction-container,
+.result-container,
+.login-container,
+.register-container,
+.center-container {
+   flex-grow: 1;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding: 2rem 1rem;
+}
+
 .success {
     background-color: rgba(76, 175, 80, 0.1);
     color: var(--success-color);
@@ -148,15 +164,6 @@ h1::after {
     margin-bottom: 1rem;
     text-align: center;
     border-left: 3px solid var(--success-color);
-}
-
-.center-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem 1rem;
 }
 
 .custom-select {
@@ -168,4 +175,49 @@ h1::after {
     .card {
         padding: 1.5rem;
     }
+}
+
+.top-navbar {
+    background-color: var(--primary-blue);
+    padding: 0.8rem 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.navbar-brand {
+    color: var(--text-light);
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links li a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.navbar-links li a:hover {
+    color: var(--primary-orange);
 }
