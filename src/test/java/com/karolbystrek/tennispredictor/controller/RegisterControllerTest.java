@@ -31,6 +31,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.context.TestConfiguration;
+
 import com.karolbystrek.tennispredictor.exceptions.UserAlreadyExistsException;
 import com.karolbystrek.tennispredictor.model.RegisterRequest;
 import com.karolbystrek.tennispredictor.service.UserService;
