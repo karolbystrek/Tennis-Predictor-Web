@@ -42,7 +42,7 @@ class PredictionControllerTest {
         @Bean
         SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http
-                .authorizeHttpRequests(authz -> authz
+                .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.GET, "/prediction", "/prediction/result").permitAll()
                     .requestMatchers(HttpMethod.POST, "/prediction").permitAll()
                     .anyRequest().authenticated()

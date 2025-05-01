@@ -47,7 +47,7 @@ class RegisterControllerTest {
         @Bean
         SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http
-                .authorizeHttpRequests(authz -> authz
+                .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/register").permitAll()
                     .anyRequest().authenticated()
                 )
