@@ -1,14 +1,8 @@
 package com.karolbystrek.tennispredictor.controller;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.karolbystrek.tennispredictor.model.PredictionRequest;
+import com.karolbystrek.tennispredictor.model.PredictionResponse;
+import com.karolbystrek.tennispredictor.service.PredictionApiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,9 +20,14 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.karolbystrek.tennispredictor.model.PredictionRequest;
-import com.karolbystrek.tennispredictor.model.PredictionResponse;
-import com.karolbystrek.tennispredictor.service.PredictionService;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Unit tests for the {@link PredictionController}.
@@ -37,35 +36,13 @@ import com.karolbystrek.tennispredictor.service.PredictionService;
 @Import(PredictionControllerTest.TestSecurityConfig.class)
 class PredictionControllerTest {
 
-    @TestConfiguration
-    static class TestSecurityConfig {
-        @Bean
-        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-            http
-                .authorizeHttpRequests(authz -> authz
-                    .requestMatchers(HttpMethod.GET, "/prediction", "/prediction/result").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/prediction").permitAll()
-                    .anyRequest().authenticated()
-                );
-            return http.build();
-        }
-    }
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private PredictionService predictionService;
-
     private static final String PREDICTION_URL = "/prediction";
     private static final String PREDICTION_VIEW = "prediction";
     private static final String PREDICTION_REQUEST_ATTRIBUTE = "predictionRequest";
-
     private static final String PREDICTION_RESULT_URL = "/prediction/result";
     private static final String PREDICTION_RESULT_VIEW = "prediction-result";
     private static final String PREDICTION_RESPONSE_ATTRIBUTE = "predictionResponse";
     private static final String PREDICTION_ERROR_ATTRIBUTE = "error";
-
     private static final Long TEST_PLAYER1_ID = 104745L;
     private static final String TEST_PLAYER1_NAME = "Novak Djokovic";
     private static final Float TEST_PLAYER1_WIN_PROBABILITY = 0.65f;
@@ -77,20 +54,14 @@ class PredictionControllerTest {
     private static final Integer TEST_BEST_OF = 5;
     private static final String TEST_ROUND = "F";
     private static final Float TEST_CONFIDENCE = 0.8f;
-
-    private PredictionRequest validRequest;
+    @Autowired
+    private MockMvc mockMvc;
+    @MockBean
+    private PredictionApiService predictionApiService;
     private PredictionResponse validResponse;
 
     @BeforeEach
     void setUp() {
-        validRequest = new PredictionRequest();
-        validRequest.setPlayer1Id(TEST_PLAYER1_ID);
-        validRequest.setPlayer2Id(TEST_PLAYER2_ID);
-        validRequest.setSurface(TEST_SURFACE);
-        validRequest.setTourneyLevel(TEST_TOURNEY_LEVEL);
-        validRequest.setBestOf(TEST_BEST_OF);
-        validRequest.setRound(TEST_ROUND);
-
         validResponse = new PredictionResponse();
         validResponse.setPlayer1Name(TEST_PLAYER1_NAME);
         validResponse.setPlayer2Name(TEST_PLAYER2_NAME);
@@ -132,7 +103,7 @@ class PredictionControllerTest {
     @DisplayName("POST /prediction - Should predict successfully and redirect to /prediction/result")
     @WithAnonymousUser
     void makePrediction_WithValidData_ShouldPredictAndRedirectToPredictionResult() throws Exception {
-        when(predictionService.predict(any(PredictionRequest.class))).thenReturn(validResponse);
+        when(predictionApiService.predict(any(PredictionRequest.class))).thenReturn(validResponse);
 
         ArgumentCaptor<PredictionRequest> requestCaptor = ArgumentCaptor.forClass(PredictionRequest.class);
 
@@ -156,7 +127,7 @@ class PredictionControllerTest {
                 .andExpect(flash().attribute(PREDICTION_RESPONSE_ATTRIBUTE, hasProperty("winnerId", is(validResponse.getWinnerId()))))
                 .andExpect(flash().attribute(PREDICTION_RESPONSE_ATTRIBUTE, hasProperty("confidence", is(validResponse.getConfidence()))));
 
-        verify(predictionService, times(1)).predict(requestCaptor.capture());
+        verify(predictionApiService, times(1)).predict(requestCaptor.capture());
 
         PredictionRequest capturedRequest = requestCaptor.getValue();
         assertEquals(TEST_PLAYER1_ID, capturedRequest.getPlayer1Id());
@@ -183,7 +154,7 @@ class PredictionControllerTest {
                 .andExpect(flash().attribute(PREDICTION_REQUEST_ATTRIBUTE, hasProperty("player2Id", is(TEST_PLAYER2_ID))))
                 .andExpect(flash().attribute(PREDICTION_REQUEST_ATTRIBUTE, hasProperty("surface", is(TEST_SURFACE))));
 
-        verify(predictionService, never()).predict(any(PredictionRequest.class));
+        verify(predictionApiService, never()).predict(any(PredictionRequest.class));
     }
 
     @Test
@@ -191,7 +162,7 @@ class PredictionControllerTest {
     @WithAnonymousUser
     void makePrediction_WhenServiceThrowsError_ShouldRedirectToPredictionWithError() throws Exception {
         String errorMessage = "External prediction API unavailable";
-        when(predictionService.predict(any(PredictionRequest.class))).thenThrow(new RuntimeException(errorMessage));
+        when(predictionApiService.predict(any(PredictionRequest.class))).thenThrow(new RuntimeException(errorMessage));
 
         mockMvc.perform(post(PREDICTION_URL)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -211,6 +182,20 @@ class PredictionControllerTest {
                 .andExpect(flash().attribute(PREDICTION_REQUEST_ATTRIBUTE, hasProperty("player2Id", is(TEST_PLAYER2_ID))))
                 .andExpect(flash().attribute(PREDICTION_REQUEST_ATTRIBUTE, hasProperty("surface", is(TEST_SURFACE))));
 
-        verify(predictionService, times(1)).predict(any(PredictionRequest.class));
+        verify(predictionApiService, times(1)).predict(any(PredictionRequest.class));
+    }
+
+    @TestConfiguration
+    static class TestSecurityConfig {
+        @Bean
+        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http
+                    .authorizeHttpRequests(authz -> authz
+                            .requestMatchers(HttpMethod.GET, "/prediction", "/prediction/result").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/prediction").permitAll()
+                            .anyRequest().authenticated()
+                    );
+            return http.build();
+        }
     }
 }

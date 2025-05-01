@@ -7,6 +7,7 @@ import com.karolbystrek.tennispredictor.exceptions.PlayerNotFoundException;
 import com.karolbystrek.tennispredictor.exceptions.PredictionServiceException;
 import com.karolbystrek.tennispredictor.model.PredictionRequest;
 import com.karolbystrek.tennispredictor.model.PredictionResponse;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -24,8 +25,8 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Prediction Service Tests")
-public class PredictionServiceTest {
+@DisplayName("Prediction API Service Tests")
+public class PredictionApiServiceTest {
 
     private final static String TEST_API_KEY = "test-api-key";
     private final static String TEST_PREDICT_PATH = "/predict";
@@ -33,7 +34,7 @@ public class PredictionServiceTest {
     private static MockWebServer mockWebServer;
     private static ObjectMapper objectMapper;
 
-    private PredictionService predictionService;
+    private PredictionApiService predictionApiService;
 
     @BeforeAll
     static void setUpServer() throws IOException {
@@ -51,7 +52,7 @@ public class PredictionServiceTest {
     void setUp() {
         String baseUrl = String.format("http://localhost:%s", mockWebServer.getPort());
         WebClient.Builder webClientBuilder = WebClient.builder();
-        predictionService = new PredictionService(webClientBuilder, baseUrl, TEST_API_KEY, TEST_PREDICT_PATH);
+        predictionApiService = new PredictionApiService(webClientBuilder, baseUrl, TEST_API_KEY, TEST_PREDICT_PATH);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class PredictionServiceTest {
                 .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .setBody(jsonResponse));
 
-        PredictionResponse actualResponse = predictionService.predict(request);
+        PredictionResponse actualResponse = predictionApiService.predict(request);
 
         assertNotNull(actualResponse);
         assertEquals(expectedResponse.getPlayer1Name(), actualResponse.getPlayer1Name());
@@ -97,7 +98,7 @@ public class PredictionServiceTest {
 
         PredictionServiceException exception = assertThrows(
                 PredictionServiceException.class,
-                () -> predictionService.predict(request)
+                () -> predictionApiService.predict(request)
         );
 
         assertNotNull(exception);
@@ -125,7 +126,7 @@ public class PredictionServiceTest {
 
         PlayerNotFoundException exception = assertThrows(
                 PlayerNotFoundException.class,
-                () -> predictionService.predict(request));
+                () -> predictionApiService.predict(request));
 
         assertNotNull(exception);
         assertTrue(exception.getMessage().contains("Player not found"));
@@ -151,7 +152,7 @@ public class PredictionServiceTest {
 
         PredictionServiceException exception = assertThrows(
                 PredictionServiceException.class,
-                () -> predictionService.predict(request)
+                () -> predictionApiService.predict(request)
         );
 
         assertNotNull(exception);
@@ -179,7 +180,7 @@ public class PredictionServiceTest {
 
         PredictionServiceException exception = assertThrows(
                 PredictionServiceException.class,
-                () -> predictionService.predict(request)
+                () -> predictionApiService.predict(request)
         );
 
         assertNotNull(exception);
@@ -207,7 +208,7 @@ public class PredictionServiceTest {
 
         PredictionServiceException exception = assertThrows(
                 PredictionServiceException.class,
-                () -> predictionService.predict(request)
+                () -> predictionApiService.predict(request)
         );
 
         assertNotNull(exception);
