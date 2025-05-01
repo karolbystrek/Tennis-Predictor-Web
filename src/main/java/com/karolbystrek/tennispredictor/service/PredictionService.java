@@ -2,8 +2,12 @@ package com.karolbystrek.tennispredictor.service;
 
 import com.karolbystrek.tennispredictor.exceptions.PlayerNotFoundException;
 import com.karolbystrek.tennispredictor.exceptions.PredictionServiceException;
+import com.karolbystrek.tennispredictor.model.Prediction;
 import com.karolbystrek.tennispredictor.model.PredictionRequest;
 import com.karolbystrek.tennispredictor.model.PredictionResponse;
+import com.karolbystrek.tennispredictor.model.PredictionSaveRequest;
+import com.karolbystrek.tennispredictor.repository.PredictionRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +26,10 @@ public class PredictionService {
     private static final Logger log = LoggerFactory.getLogger(PredictionService.class);
     private final WebClient client;
     private final String predictPath;
+    private final PredictionRepository predictionRepository;
 
-    public PredictionService(WebClient.Builder webClientBuilder,
+    public PredictionService(PredictionRepository predictionRepository,
+                             WebClient.Builder webClientBuilder,
                              @Value("${tennis.predictor.api.base-url}") String baseUrl,
                              @Value("${tennis.predictor.api.key}") String apiKey,
                              @Value("${tennis.predictor.api.predict-path}") String predictPath) {
@@ -39,7 +45,7 @@ public class PredictionService {
             log.error("API predict path 'tennis.predictor.api.predict-path' is not configured properly in application.properties.");
             throw new IllegalStateException("API predict path not configured for PredictionService");
         }
-
+        this.predictionRepository = predictionRepository;
         this.predictPath = predictPath;
 
         this.client = webClientBuilder
@@ -92,4 +98,15 @@ public class PredictionService {
         log.info("Prediction response: {}", response);
         return response;
     }
+
+    public void save(PredictionSaveRequest request) {
+        if (request == null) {
+            log.error("Prediction Save Request cannot be empty");
+            throw new PredictionServiceException("Prediction Save Request cannot be empty");
+        }
+        Prediction prediction = new Prediction(request);
+        predictionRepository.save(prediction);
+        log.info("Successfully saved prediction result from user: {}", request.getUsername());
+    }
+
 }
