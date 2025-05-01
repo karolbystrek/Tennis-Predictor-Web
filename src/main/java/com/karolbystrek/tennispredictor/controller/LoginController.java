@@ -4,12 +4,10 @@ import com.karolbystrek.tennispredictor.model.LoginRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-@RequestMapping
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
