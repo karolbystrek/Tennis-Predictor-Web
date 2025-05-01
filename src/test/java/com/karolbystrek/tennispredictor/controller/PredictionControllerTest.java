@@ -1,8 +1,14 @@
 package com.karolbystrek.tennispredictor.controller;
 
-import com.karolbystrek.tennispredictor.model.PredictionRequest;
-import com.karolbystrek.tennispredictor.model.PredictionResponse;
-import com.karolbystrek.tennispredictor.service.PredictionApiService;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,14 +26,9 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.karolbystrek.tennispredictor.model.PredictionRequest;
+import com.karolbystrek.tennispredictor.model.PredictionResponse;
+import com.karolbystrek.tennispredictor.service.PredictionApiService;
 
 /**
  * Unit tests for the {@link PredictionController}.
@@ -36,13 +37,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(PredictionControllerTest.TestSecurityConfig.class)
 class PredictionControllerTest {
 
+    @TestConfiguration
+    static class TestSecurityConfig {
+        @Bean
+        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http
+                .authorizeHttpRequests(authz -> authz
+                    .requestMatchers(HttpMethod.GET, "/prediction", "/prediction/result").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/prediction").permitAll()
+                    .anyRequest().authenticated()
+                );
+            return http.build();
+        }
+    }
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private PredictionApiService predictionApiService;
+
     private static final String PREDICTION_URL = "/prediction";
     private static final String PREDICTION_VIEW = "prediction";
     private static final String PREDICTION_REQUEST_ATTRIBUTE = "predictionRequest";
+
     private static final String PREDICTION_RESULT_URL = "/prediction/result";
     private static final String PREDICTION_RESULT_VIEW = "prediction-result";
     private static final String PREDICTION_RESPONSE_ATTRIBUTE = "predictionResponse";
     private static final String PREDICTION_ERROR_ATTRIBUTE = "error";
+
     private static final Long TEST_PLAYER1_ID = 104745L;
     private static final String TEST_PLAYER1_NAME = "Novak Djokovic";
     private static final Float TEST_PLAYER1_WIN_PROBABILITY = 0.65f;
@@ -54,10 +77,7 @@ class PredictionControllerTest {
     private static final Integer TEST_BEST_OF = 5;
     private static final String TEST_ROUND = "F";
     private static final Float TEST_CONFIDENCE = 0.8f;
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
-    private PredictionApiService predictionApiService;
+
     private PredictionResponse validResponse;
 
     @BeforeEach
@@ -183,19 +203,5 @@ class PredictionControllerTest {
                 .andExpect(flash().attribute(PREDICTION_REQUEST_ATTRIBUTE, hasProperty("surface", is(TEST_SURFACE))));
 
         verify(predictionApiService, times(1)).predict(any(PredictionRequest.class));
-    }
-
-    @TestConfiguration
-    static class TestSecurityConfig {
-        @Bean
-        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-            http
-                    .authorizeHttpRequests(authz -> authz
-                            .requestMatchers(HttpMethod.GET, "/prediction", "/prediction/result").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/prediction").permitAll()
-                            .anyRequest().authenticated()
-                    );
-            return http.build();
-        }
     }
 }
