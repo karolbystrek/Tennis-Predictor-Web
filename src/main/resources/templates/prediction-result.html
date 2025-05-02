@@ -12,6 +12,9 @@
 <div class="result-container">
     <div class="result-card">
         <h1>Match Prediction Result</h1>
+        <div th:if="${saveSuccess}" class="alert alert-success" role="alert" th:text="${saveSuccess}">Save successful!</div>
+        <div th:if="${saveError}" class="alert alert-danger" role="alert" th:text="${saveError}">Save failed!</div>
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}">An error occurred!</div>
         <div class="players-stats">
             <div class="players-stat">
                 <div class="player-name" th:text="${predictionResponse.player1Name}">Player 1</div>
@@ -35,6 +38,28 @@
                 Confidence: <span th:text="${#numbers.formatPercent(predictionResponse.confidence, 1, 0)}">75%</span>
             </div>
         </div>
+        <div sec:authorize="isAuthenticated()" th:if="${saveSuccess == null}">
+            <form th:action="@{/prediction/save}" method="post" th:object="${predictionSaveRequest}" class="save-form">
+                <input type="hidden" th:field="*{player1Id}"/>
+                <input type="hidden" th:field="*{player1Name}"/>
+                <input type="hidden" th:field="*{player2Id}"/>
+                <input type="hidden" th:field="*{player2Name}"/>
+                <input type="hidden" th:field="*{player1WinProbability}"/>
+                <input type="hidden" th:field="*{player2WinProbability}"/>
+                <input type="hidden" th:field="*{winnerName}"/>
+                <input type="hidden" th:field="*{confidence}"/>
+                <input type="hidden" th:field="*{tourneyLevel}"/>
+                <input type="hidden" th:field="*{surface}"/>
+                <input type="hidden" th:field="*{bestOf}"/>
+                <input type="hidden" th:field="*{round}"/>
+
+                <button type="submit" class="btn btn-save">Save Prediction</button>
+            </form>
+        </div>
+        <div sec:authorize="!isAuthenticated()" class="auth-message">
+            <p>Please <a th:href="@{/login}">log in</a> to save this prediction.</p>
+        </div>
+
         <a class="back-button" href="/prediction">Make Another Prediction</a>
     </div>
 </div>
